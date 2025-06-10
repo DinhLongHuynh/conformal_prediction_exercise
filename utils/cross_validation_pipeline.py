@@ -7,7 +7,41 @@ from imblearn.over_sampling import SMOTE
 
 
 def cross_validation_regressor(model, X_train, y_train, X_test, y_test, k=10, random_state=2406):
-    """Cross-validation pipeline for any sklearn model"""
+    """
+    Perform k-fold cross-validation for regression models.
+    
+    This function evaluates a regression model using k-fold cross-validation,
+    calculating RMSE and R² scores for each fold. It then trains a final model
+    on the full training set and evaluates it on the test set.
+    
+    Parameters
+    ----------
+    model : sklearn estimator
+        A scikit-learn compatible regression model (must implement fit and predict methods).
+    X_train : array-like of shape (n_samples, n_features)
+        Training feature matrix.
+    y_train : array-like of shape (n_samples,)
+        Training target values.
+    X_test : array-like of shape (n_test_samples, n_features)
+        Test feature matrix.
+    y_test : array-like of shape (n_test_samples,)
+        Test target values.
+    k : int, default=10
+        Number of folds for cross-validation.
+    random_state : int, default=2406
+        Random state for reproducible results.
+    
+    Returns
+    -------
+    tuple of (list, list, float)
+        - train_scores : list of float
+            RMSE scores on training folds for each CV fold.
+        - val_scores : list of float
+            RMSE scores on validation folds for each CV fold.
+        - test_score : float
+            RMSE score on the final test set.
+    """
+    
     kf = KFold(n_splits=k, shuffle=True, random_state=random_state)
     train_scores = []
     val_scores = []
@@ -47,6 +81,42 @@ def cross_validation_regressor(model, X_train, y_train, X_test, y_test, k=10, ra
 
 
 def cross_validation_classifier(model, X_train, y_train, X_test, y_test, k=10, random_state=2406):
+    """
+    Perform stratified k-fold cross-validation for binary classification models with SMOTE oversampling.
+    
+    This function evaluates a binary classification model using stratified k-fold cross-validation.
+    It applies SMOTE oversampling to handle class imbalance in each training fold and calculates
+    precision-recall AUC scores. A final model is trained on the original training set and 
+    evaluated on the test set.
+    
+    Parameters
+    ----------
+    model : sklearn estimator
+        A scikit-learn compatible classification model (must implement fit and predict_proba methods).
+    X_train : array-like of shape (n_samples, n_features)
+        Training feature matrix.
+    y_train : array-like of shape (n_samples,)
+        Training target labels (binary: 0 or 1).
+    X_test : array-like of shape (n_test_samples, n_features)
+        Test feature matrix.
+    y_test : array-like of shape (n_test_samples,)
+        Test target labels (binary: 0 or 1).
+    k : int, default=10
+        Number of folds for cross-validation.
+    random_state : int, default=2406
+        Random state for reproducible results (used for both StratifiedKFold and SMOTE).
+    
+    Returns
+    -------
+    tuple of (list, list, float)
+        - train_scores : list of float
+            Precision-recall AUC scores on oversampled training folds for each CV fold.
+        - val_scores : list of float
+            Precision-recall AUC scores on validation folds for each CV fold.
+        - auc_score_test : float
+            Precision-recall AUC score on the final test set.
+    """
+    
     kf = StratifiedKFold(n_splits=k, shuffle=True, random_state=random_state)
     train_scores = []
     val_scores = []
