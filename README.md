@@ -34,5 +34,5 @@ This project follows a comprehensive approach to conformal prediction:
 
 This project acknowledges and builds upon the excellent work from:
 
-- **pharmbio/plot_utils**: [https://github.com/pharmbio/plot_utils/tree/master](https://github.com/pharmbio/plot_utils/tree/master) - Visualization utilities for pharmaceutical and chemical data analysis
+- **pharmbio/plot_utils**: [https://github.com/pharmbio/plot_utils/](https://github.com/pharmbio/plot_utils/) - Visualization utilities for pharmaceutical and chemical data analysis
 - **nonconformist**: [https://github.com/donlnz/nonconformist](https://github.com/donlnz/nonconformist) - Python library for conformal prediction implementation
