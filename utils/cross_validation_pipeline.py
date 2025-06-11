@@ -11,7 +11,7 @@ def cross_validation_regressor(model, X_train, y_train, X_test, y_test, k=10, ra
     Perform k-fold cross-validation for regression models.
     
     This function evaluates a regression model using k-fold cross-validation,
-    calculating RMSE and R² scores for each fold. It then trains a final model
+    calculating RMSE for each fold. A final model is retrained
     on the full training set and evaluates it on the test set.
     
     Parameters
@@ -45,7 +45,6 @@ def cross_validation_regressor(model, X_train, y_train, X_test, y_test, k=10, ra
     kf = KFold(n_splits=k, shuffle=True, random_state=random_state)
     train_scores = []
     val_scores = []
-
     for fold, (train_idx, val_idx) in enumerate(kf.split(X_train), 1):
         # Split data
         X_train_fold, X_val_fold = X_train[train_idx], X_train[val_idx]
@@ -60,17 +59,15 @@ def cross_validation_regressor(model, X_train, y_train, X_test, y_test, k=10, ra
         # Predict and calculate RMSE
         y_train_pred = model_fold.predict(X_train_fold)
         y_val_pred = model_fold.predict(X_val_fold)
-        
 
         rmse_train = root_mean_squared_error(y_train_fold, y_train_pred)
         rmse_val = root_mean_squared_error(y_val_fold, y_val_pred)
-        
-        r2_val = r2_score(y_val_fold, y_val_pred)
 
+        # Store RMSE scores
         train_scores.append(rmse_train)
         val_scores.append(rmse_val)
 
-        print(f"Fold {fold}: RMSE_train = {rmse_train}; RMSE_val = {rmse_val}; R2_val = {r2_val}")
+        print(f"Fold {fold}: RMSE_train = {rmse_train}; RMSE_val = {rmse_val}")
     
     final_model = copy.deepcopy(model)
     final_model.fit(X_train, y_train)
@@ -86,13 +83,13 @@ def cross_validation_classifier(model, X_train, y_train, X_test, y_test, k=10, r
     
     This function evaluates a binary classification model using stratified k-fold cross-validation.
     It applies SMOTE oversampling to handle class imbalance in each training fold and calculates
-    precision-recall AUC scores. A final model is trained on the original training set and 
+    precision-recall AUC scores. A final model is retrained on the full training set and 
     evaluated on the test set.
     
     Parameters
     ----------
     model : sklearn estimator
-        A scikit-learn compatible classification model (must implement fit and predict_proba methods).
+        A scikit-learn compatible classification model.
     X_train : array-like of shape (n_samples, n_features)
         Training feature matrix.
     y_train : array-like of shape (n_samples,)
@@ -120,7 +117,6 @@ def cross_validation_classifier(model, X_train, y_train, X_test, y_test, k=10, r
     kf = StratifiedKFold(n_splits=k, shuffle=True, random_state=random_state)
     train_scores = []
     val_scores = []
-    
     for fold, (train_idx, val_idx) in enumerate(kf.split(X_train, y_train), 1):
         # Split data
         X_train_fold = X_train[train_idx]
@@ -128,7 +124,7 @@ def cross_validation_classifier(model, X_train, y_train, X_test, y_test, k=10, r
         y_train_fold = y_train[train_idx]
         y_val_fold = y_train[val_idx]
         
-        # Apply SMOTE or RandomOverSampler
+        # Apply SMOTE
         oversampler = SMOTE(random_state=random_state)
         X_train_fold_res, y_train_fold_res = oversampler.fit_resample(X_train_fold, y_train_fold)
 
@@ -138,18 +134,16 @@ def cross_validation_classifier(model, X_train, y_train, X_test, y_test, k=10, r
         # Train model
         model_fold.fit(X_train_fold_res, y_train_fold_res)
 
-        # Predict
+        # Predict and calculate AUC-PR scores
         y_train_pred = model_fold.predict_proba(X_train_fold_res)[:, 1]
         y_val_pred = model_fold.predict_proba(X_val_fold)[:, 1]
 
-
-        # Calculate AUC (adjust as needed)
         precision, recall, thresholds = precision_recall_curve(y_train_fold_res, y_train_pred)
         auc_score_train = auc(recall, precision)
         precision, recall, thresholds = precision_recall_curve(y_val_fold, y_val_pred)
         auc_score_val = auc(recall, precision)
 
-
+        # Store AUC-PR scores
         train_scores.append(auc_score_train)
         val_scores.append(auc_score_val)
 

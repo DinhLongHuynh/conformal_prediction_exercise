@@ -8,10 +8,41 @@ from skopt.space import Real, Integer
 from utils.cross_validation_pipeline import cross_validation_regressor, cross_validation_classifier
 
 
+"""
+    Optimize Regressors hyperparameters using Bayesian optimization.
+    Tracking metric is Val_RMSE and the gap between Val_RMSE and Train_RMSE.
+    
+    Parameters
+    ----------
+    X_train : array-like of shape (n_samples, n_features)
+        Training input samples.
+    y_train : array-like of shape (n_samples,)
+        Training target values (real numbers).
+    X_test : array-like of shape (n_test_samples, n_features)
+        Test input samples used for validation during optimization.
+    y_test : array-like of shape (n_test_samples,)
+        Test target values used for validation during optimization.
+    n_calls : int, default=30
+        Number of calls to the objective function for optimization.
+    verbose : bool, default=True
+        If True, print optimization progress.
+    
+    Returns
+    -------
+    result : OptimizeResult
+        Optimization result object with the following additional attributes:
+        - best_params : dict
+            Dictionary containing the best hyperparameters found.
+        - best_model_class : class
+            The Regressor class for model instantiation.
+
+"""
+
 def optimize_random_forest_regressor(X_train, y_train, X_test, y_test, n_calls=30, verbose=True):
     """
     Optimize Random Forest Regressor
     """
+
     def objective(params):
         n_estimators, max_depth, min_samples_split, min_samples_leaf, max_features = params
         model = RandomForestRegressor(
@@ -53,7 +84,7 @@ def optimize_random_forest_regressor(X_train, y_train, X_test, y_test, n_calls=3
 
 def optimize_svr_regressor(X_train, y_train, X_test, y_test, n_calls=30, verbose=True):
     """
-    Optimize Support Vector Regression
+    Optimize Support Vector Regressor
     """
     def objective(params):
         C, epsilon, gamma = params
@@ -134,7 +165,7 @@ def optimize_xgboost_regressor(X_train, y_train, X_test, y_test, n_calls=30, ver
 
 def optimize_lightgbm_regressor(X_train, y_train, X_test, y_test, n_calls=30, verbose=True):
     """
-    Optimize LightGBM Regressor using Bayesian Optimization
+    Optimize LightGBM Regressor
     """
     def objective(params):
         n_estimators, max_depth, num_leaves, min_child_samples, learning_rate, subsample, colsample_bytree = params
@@ -181,12 +212,39 @@ def optimize_lightgbm_regressor(X_train, y_train, X_test, y_test, n_calls=30, ve
 
     return result
 
+"""
+    Optimize Classifier hyperparameters using Bayesian optimization.
+    Tracking metric is Val_AUC and the gap between Val_AUC and Train_AUC.
+    
+    Parameters
+    ----------
+    X_train : array-like of shape (n_samples, n_features)
+        Training input samples.
+    y_train : array-like of shape (n_samples,)
+        Training target values (real numbers).
+    X_test : array-like of shape (n_test_samples, n_features)
+        Test input samples used for validation during optimization.
+    y_test : array-like of shape (n_test_samples,)
+        Test target values used for validation during optimization.
+    n_calls : int, default=30
+        Number of calls to the objective function for optimization.
+    verbose : bool, default=True
+        If True, print optimization progress.
+    
+    Returns
+    -------
+    result : OptimizeResult
+        Optimization result object with the following additional attributes:
+        - best_params : dict
+            Dictionary containing the best hyperparameters found.
+        - best_model_class : class
+            The Classifier class for model instantiation.
 
-
+"""
 
 def optimize_random_forest_classifier(X_train, y_train, X_test, y_test, n_calls=30, verbose=True):
     """
-    Optimize Random Forest Classifier using Bayesian Optimization
+    Optimize Random Forest Classifier.
     """
     def objective(params):
         n_estimators, max_depth, min_samples_split, min_samples_leaf, max_features = params

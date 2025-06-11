@@ -2,6 +2,10 @@
 
 This repository contains an exercise exploring conformal prediction techniques applied to a dataset of chemical compounds with Ki (inhibition constant) values measured in nanomolar (nM) units.
 
+<p align="center">
+  <img src="images/cover.png" alt="Alt text" width="700">
+</p>
+
 ## Methodology
 
 This project follows a comprehensive approach to conformal prediction:
